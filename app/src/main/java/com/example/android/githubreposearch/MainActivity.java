@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -30,6 +32,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Create a method called makeGithubSearchQuery
+
+    public void makeGithubSearchQuery (){
+// Within this method, build the URL with the text from the EditText and set the built URL to the TextView
+        String gitHubQuery = mSearchBoxEditText.getText().toString();
+        URL githubSearchURL = NetworkUtils.buildUrl(gitHubQuery);
+        mUrlDisplayTextView.setText(githubSearchURL.toString());
+
+
+    }
+
+
+
+
     //Display or Menu; See Menus form Android Developer console
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -47,12 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
         if  (menuItemThatWasSelected == R.id.action_search){
 
-            Context context = getApplicationContext();
-            CharSequence text = "Search clicked";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            // Call makeGithubSearchQuery when the search menu item is clicked
+            makeGithubSearchQuery();
             return true;
         }
 
