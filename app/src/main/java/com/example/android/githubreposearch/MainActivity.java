@@ -2,6 +2,7 @@ package com.example.android.githubreposearch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.telecom.Call;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,9 +22,11 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
 
-    EditText mSearchBoxEditText;
-    TextView mUrlDisplayTextView;
-    TextView mSearchResultsTextView;
+    private EditText mSearchBoxEditText;
+    private  TextView mUrlDisplayTextView;
+    private TextView mSearchResultsTextView;
+    private TextView errorMessageTextView;
+    private ProgressBar searchProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +37,14 @@ public class MainActivity extends AppCompatActivity {
         mUrlDisplayTextView = (TextView) findViewById(R.id.tv_url_display);
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_github_search_results_json);
 
+        // TODO (13) Get a reference to the error TextView using findViewById
+            errorMessageTextView = (TextView) findViewById(R.id.tv_error_message_display);
+        // TODO (25) Get a reference to the ProgressBar using findViewById
+            searchProgressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
     }
 
-    //Create a method called makeGithubSearchQuery
+
 
     public void makeGithubSearchQuery (){
     //Within this method, build the URL with the text from the EditText and set the built URL to the TextView
@@ -49,9 +58,28 @@ public class MainActivity extends AppCompatActivity {
       new GithubQueryTask().execute(githubSearchURL);
     }
 
+    // TODO (14) Create a method called showJsonDataView to show the data and hide the error
 
+    private void  showJsonDataView(){
+        errorMessageTextView.setVisibility(View.INVISIBLE);
+        mSearchResultsTextView.setVisibility(View.VISIBLE);
+
+    }
+
+
+    // TODO (15) Create a method called showErrorMessage to show the error and hide the data
+    private void showErrorMessage(){
+        mSearchResultsTextView.setVisibility(View.INVISIBLE);
+        errorMessageTextView.setVisibility(View.VISIBLE);
+    }
 
     private class GithubQueryTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            searchProgressBar.setVisibility(View.VISIBLE);
+
+        }
 
         @Override
         protected String doInBackground(URL... urls) {
@@ -79,9 +107,13 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(String s) {
+            searchProgressBar.setVisibility(View.INVISIBLE);
             if (s != null && !s.equals("")) {
+                showJsonDataView();
                 mSearchResultsTextView.setText(s);
-                return;
+            } else {
+
+                showErrorMessage();
             }
         }
 
